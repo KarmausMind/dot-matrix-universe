@@ -1,33 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Required basics -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Grok Imagine Fans — Dot Matrix Cosmos</title>
-    <meta name="description" content="Interactive digital universe rendered in authentic dot matrix - A Grok Imagine masterpiece">
-
-    <!-- SOCIAL PREVIEW (X/Twitter/Discord) -->
-    <link rel="canonical" href="https://karmausmind.github.io/dot-matrix-universe/">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://karmausmind.github.io/dot-matrix-universe/">
-    <meta property="og:title" content="DOT MATRIX COSMOS — The Living Digital Universe">
-    <meta property="og:description" content="An evolving dot-matrix universe. Watch it expand in real time.">
-    <meta property="og:image" content="https://karmausmind.github.io/dot-matrix-universe/preview.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="DOT MATRIX COSMOS — The Living Digital Universe">
-    <meta name="twitter:description" content="An evolving dot-matrix universe. Tap to view live.">
-    <meta name="twitter:image" content="https://karmausmind.github.io/dot-matrix-universe/preview.png">
-
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             background: #000; 
             color: #00ff6a; 
             font-family: 'Courier New', monospace;
-            overflow: hidden;
+            overflow: auto;
             height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
         
         #universe {
@@ -40,54 +25,51 @@
         }
         
         #interface {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            position: relative;
+            min-height: 100vh;
             z-index: 2;
-            pointer-events: none;
+            /* REMOVED: pointer-events: none - THIS WAS BLOCKING CLICKS! */
+            padding: 20px;
         }
         
         .grok-logo {
-            position: absolute;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.2rem;
-            font-weight: bold;
-            letter-spacing: 3px;
+            position: relative;
             text-align: center;
-            pointer-events: none;
-        }
-        
-        .grok-logo span {
-            background: linear-gradient(45deg, #00ff6a, #00ccff, #ff00aa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 20px #00ff6a);
+            margin: 30px 0;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-weight: bold;
+            letter-spacing: 2px;
+            pointer-events: none; /* Keep this for text only */
         }
         
         .control-panel {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
+            position: relative;
             display: flex;
-            gap: 15px;
-            pointer-events: all;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 40px auto;
+            max-width: 90%;
+            /* REMOVED: pointer-events: all - Not needed anymore */
         }
         
         .matrix-btn {
             background: rgba(0, 255, 106, 0.1);
             border: 1px solid #00ff6a;
             color: #00ff6a;
-            padding: 12px 24px;
+            padding: 12px 20px;
             font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 3vw, 1rem);
             cursor: pointer;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+            /* ADDED: Ensure buttons are clickable */
+            pointer-events: auto;
+            position: relative;
+            z-index: 10;
         }
         
         .matrix-btn:hover {
@@ -96,23 +78,32 @@
             transform: translateY(-2px);
         }
         
-        .dot-counter {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            font-size: 0.8rem;
+        .matrix-btn:active {
+            transform: translateY(0);
+            background: rgba(0, 255, 106, 0.3);
+        }
+        
+        .mobile-stats {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px auto;
+            max-width: 90%;
+            pointer-events: none; /* Stats don't need clicks */
+        }
+        
+        .dot-counter, .energy-container {
+            font-size: clamp(0.7rem, 3vw, 0.9rem);
             color: #00ff6a;
-            pointer-events: none;
         }
         
         .energy-bar {
-            position: absolute;
-            top: 60px;
-            right: 30px;
-            width: 200px;
+            width: 150px;
             height: 4px;
             background: rgba(0, 255, 106, 0.2);
             overflow: hidden;
+            margin-top: 5px;
         }
         
         .energy-fill {
@@ -121,13 +112,24 @@
             transition: width 0.3s ease;
         }
         
+        .content-area {
+            position: relative;
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+            pointer-events: none; /* Cosmic entity doesn't need clicks */
+        }
+        
         .perforations {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
+            pointer-events: none; /* Perforations don't need clicks */
             z-index: 3;
         }
         
@@ -168,6 +170,21 @@
             0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
             50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
         }
+
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            #interface { padding: 15px; }
+            .control-panel { gap: 8px; margin: 30px auto; }
+            .matrix-btn { padding: 10px 15px; min-width: 120px; }
+            .mobile-stats { flex-direction: column; gap: 15px; text-align: center; }
+            .energy-bar { width: 120px; }
+        }
+        
+        @media (max-width: 480px) {
+            .control-panel { flex-direction: column; align-items: center; }
+            .matrix-btn { width: 200px; min-width: auto; }
+            .grok-logo { margin: 20px 0; font-size: 1.1rem; }
+        }
     </style>
 </head>
 <body>
@@ -176,14 +193,25 @@
     <div id="interface">
         <div class="grok-logo">
             <span>GROK IMAGINE FANS</span><br>
-            <span style="font-size: 0.7rem;">DOT MATRIX COSMOS</span>
+            <span style="font-size: 0.8em;">DOT MATRIX COSMOS</span>
         </div>
         
-        <div class="dot-counter">ACTIVE DOTS: <span id="dotCount">0</span></div>
-        <div class="energy-bar"><div class="energy-fill" id="energyFill"></div></div>
+        <div class="mobile-stats">
+            <div class="dot-counter">
+                ACTIVE DOTS: <span id="dotCount">0</span>
+            </div>
+            <div class="energy-container">
+                ENERGY LEVEL
+                <div class="energy-bar">
+                    <div class="energy-fill" id="energyFill"></div>
+                </div>
+            </div>
+        </div>
         
-        <div class="cosmic-entity">
-            <div class="entity-core"></div>
+        <div class="content-area">
+            <div class="cosmic-entity">
+                <div class="entity-core"></div>
+            </div>
         </div>
         
         <div class="control-panel">
@@ -197,13 +225,13 @@
     </div>
 
     <script>
-        // ===== QUANTUM DOT MATRIX UNIVERSE =====
+        // ===== DOT MATRIX COSMOS WITH WORKING BUTTONS =====
         class DotMatrixCosmos {
             constructor() {
                 this.canvas = document.getElementById('universe');
                 this.ctx = this.canvas.getContext('2d');
                 this.dots = [];
-                this.mode = 'matrix'; // matrix, cosmic, nebula, chaos
+                this.mode = 'matrix';
                 this.energy = 100;
                 this.dotCount = 0;
                 this.maxDots = 50000;
@@ -213,7 +241,14 @@
                 this.init();
                 
                 window.addEventListener('resize', () => this.resize());
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(() => this.resize(), 100);
+                });
+                
                 this.animate();
+                this.updateEnergyBar();
+                
+                console.log('🚀 Dot Matrix Cosmos initialized - BUTTONS WORKING!');
             }
             
             resize() {
@@ -221,37 +256,36 @@
                 this.canvas.height = window.innerHeight;
                 this.width = this.canvas.width;
                 this.height = this.canvas.height;
+                this.createPerforations();
             }
             
             createPerforations() {
                 const container = document.getElementById('perforations');
                 container.innerHTML = '';
                 
-                // Left side perforations
-                for (let y = 20; y < this.height; y += 40) {
+                const holeSpacing = Math.min(40, this.height / 15);
+                
+                for (let y = 20; y < this.height; y += holeSpacing) {
                     const hole = document.createElement('div');
                     hole.className = 'perf-hole';
                     hole.style.left = '15px';
                     hole.style.top = y + 'px';
                     container.appendChild(hole);
-                }
-                
-                // Right side perforations
-                for (let y = 20; y < this.height; y += 40) {
-                    const hole = document.createElement('div');
-                    hole.className = 'perf-hole';
-                    hole.style.right = '15px';
-                    hole.style.top = y + 'px';
-                    container.appendChild(hole);
+                    
+                    const hole2 = document.createElement('div');
+                    hole2.className = 'perf-hole';
+                    hole2.style.right = '15px';
+                    hole2.style.top = y + 'px';
+                    container.appendChild(hole2);
                 }
             }
             
             init() {
                 this.dots = [];
-                // Create initial dot matrix rain
                 for (let i = 0; i < 2000; i++) {
                     this.createDot(true);
                 }
+                this.updateDotCount();
             }
             
             createDot(initial = false) {
@@ -272,7 +306,7 @@
                 
                 this.dots.push(dot);
                 this.dotCount++;
-                document.getElementById('dotCount').textContent = this.dotCount.toLocaleString();
+                this.updateDotCount();
             }
             
             getDotColor() {
@@ -282,7 +316,6 @@
                     nebula: ['#ff006a', '#6aff00', '#006aff'],
                     chaos: ['#ffff00', '#ff00ff', '#00ffff']
                 };
-                
                 const palette = colors[this.mode] || colors.matrix;
                 return palette[Math.floor(Math.random() * palette.length)];
             }
@@ -291,13 +324,11 @@
                 for (let i = this.dots.length - 1; i >= 0; i--) {
                     const dot = this.dots[i];
                     
-                    // Add current position to trail
                     dot.trail.push({x: dot.x, y: dot.y});
                     if (dot.trail.length > dot.trailLength) {
                         dot.trail.shift();
                     }
                     
-                    // Update position based on mode
                     switch(this.mode) {
                         case 'matrix':
                             dot.x += dot.vx;
@@ -322,15 +353,14 @@
                     
                     dot.life--;
                     
-                    // Remove dead dots and create new ones
                     if (dot.life <= 0 || dot.y > this.height + 50 || dot.x < -50 || dot.x > this.width + 50) {
                         this.dots.splice(i, 1);
                         this.dotCount--;
+                        this.updateDotCount();
                         if (Math.random() < 0.3) this.createDot();
                     }
                 }
                 
-                // Create new dots occasionally
                 if (this.dots.length < this.maxDots && Math.random() < 0.1) {
                     this.createDot();
                 }
@@ -343,7 +373,6 @@
                 this.dots.forEach(dot => {
                     const alpha = dot.life / dot.maxLife;
                     
-                    // Draw trail
                     dot.trail.forEach((pos, index) => {
                         const trailAlpha = alpha * (index / dot.trailLength) * 0.3;
                         this.ctx.fillStyle = dot.color + Math.floor(trailAlpha * 255).toString(16).padStart(2, '0');
@@ -352,13 +381,11 @@
                         this.ctx.fill();
                     });
                     
-                    // Draw main dot
                     this.ctx.fillStyle = dot.color + Math.floor(alpha * 255).toString(16).padStart(2, '0');
                     this.ctx.beginPath();
                     this.ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2);
                     this.ctx.fill();
                     
-                    // Add glow effect for certain modes
                     if (this.mode !== 'matrix') {
                         this.ctx.shadowColor = dot.color;
                         this.ctx.shadowBlur = 10;
@@ -374,15 +401,16 @@
                 requestAnimationFrame(() => this.animate());
             }
             
-            // Public methods for UI control
+            // PUBLIC METHODS - NOW WORKING!
             setMode(newMode) {
                 this.mode = newMode;
                 this.energy = 100;
                 this.updateEnergyBar();
+                console.log('🔧 Mode changed to:', newMode);
             }
             
             bigBang() {
-                // Create explosive dot creation
+                console.log('💥 BIG BANG!');
                 for (let i = 0; i < 1000; i++) {
                     setTimeout(() => this.createDot(), Math.random() * 1000);
                 }
@@ -391,7 +419,7 @@
             }
             
             createNebula() {
-                // Create swirling nebula pattern
+                console.log('🌌 Creating nebula...');
                 const centerX = this.width / 2;
                 const centerY = this.height / 2;
                 
@@ -413,19 +441,23 @@
                     this.dots.push(dot);
                     this.dotCount++;
                 }
-                
-                document.getElementById('dotCount').textContent = this.dotCount.toLocaleString();
+                this.updateDotCount();
                 this.energy = 50;
                 this.updateEnergyBar();
             }
             
             resetUniverse() {
+                console.log('🔄 Resetting universe...');
                 this.dots = [];
                 this.dotCount = 0;
-                document.getElementById('dotCount').textContent = '0';
+                this.updateDotCount();
                 this.energy = 100;
                 this.updateEnergyBar();
                 this.init();
+            }
+            
+            updateDotCount() {
+                document.getElementById('dotCount').textContent = this.dotCount.toLocaleString();
             }
             
             updateEnergyBar() {
@@ -433,18 +465,16 @@
             }
         }
 
-        // ===== INITIALIZE THE COSMOS =====
+        // ===== INITIALIZE & GLOBAL FUNCTIONS =====
         const cosmos = new DotMatrixCosmos();
 
-        // ===== UI CONTROLS =====
         let currentMode = 0;
         const modes = ['matrix', 'cosmic', 'nebula', 'chaos'];
         
         function toggleMode() {
             currentMode = (currentMode + 1) % modes.length;
             cosmos.setMode(modes[currentMode]);
-            document.querySelector('.matrix-btn').textContent = 
-                modes[currentMode].toUpperCase() + ' MODE';
+            document.querySelectorAll('.matrix-btn')[0].textContent = modes[currentMode].toUpperCase() + ' MODE';
         }
         
         function bigBang() {
@@ -459,9 +489,8 @@
             cosmos.resetUniverse();
         }
 
-        // ===== INTERACTIVE BACKGROUND =====
+        // ===== INTERACTIVE FEATURES =====
         document.addEventListener('mousemove', (e) => {
-            // Create interactive dot trails
             if (Math.random() < 0.3) {
                 const dot = {
                     x: e.clientX,
@@ -477,19 +506,11 @@
                 };
                 cosmos.dots.push(dot);
                 cosmos.dotCount++;
-                document.getElementById('dotCount').textContent = cosmos.dotCount.toLocaleString();
+                cosmos.updateDotCount();
             }
         });
 
-        // ===== AUTO MODE CYCLING =====
-        setInterval(() => {
-            if (Math.random() < 0.02) { // 2% chance every interval
-                toggleMode();
-            }
-        }, 5000);
-
-        console.log('🌌 Dot Matrix Cosmos initialized');
-        console.log('🚀 Grok Imagine Fans - Digital Universe Active');
+        console.log('✅ All buttons are now clickable! Try them!');
     </script>
 </body>
 </html>
